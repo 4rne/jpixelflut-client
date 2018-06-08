@@ -50,9 +50,7 @@ public class ImageLoader
 			return imgData;
 		} catch (IOException e)
 		{
-			System.err.println("Image could not be loaded");
-			e.printStackTrace();
-			System.exit(42);
+			System.err.println("Image could not be loaded. Using rainbow mode instead");
 		}
 		return null;
 	}

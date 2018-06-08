@@ -27,7 +27,7 @@ class Main
 		if (arguments.isEmpty())
 		{
 			System.err.println(
-					"Need to specify at least -ip and -port. -mode [random, linear] -dim x,y -img src -scale [0..n]");
+					"Need to specify at least -ip and -port. -mode [random, linear] -dim x,y -img src -scale [0..n] -threads [1..n]");
 			System.exit(1);
 		}
 		if (!arguments.containsKey("port") || !arguments.containsKey("ip"))
@@ -47,44 +47,54 @@ class Main
 		int imageOffsetX = 0;
 		int imageOffsetY = 0;
 
-		while (true)
+		if (image == null)
 		{
-			// x = randomInt(xMax);
-			// y = randomInt(yMax);
-			// double clock = x / (float) xMax * (Math.PI * 2);
-			// int r = (int) ((Math.sin(clock) + 1) * 127);
-			// int g = (int) ((Math.sin(clock + Math.PI * 0.666) + 1) * 127);
-			// int b = (int) ((Math.sin(clock + Math.PI * 1.333) + 1) * 127);
-			// pixel(x, y, r, g, b);
-
-			for (x = 0; x < image.length; x++)
+			while (true)
 			{
-				for (y = 0; y < image[0].length; y++)
-				{
-					// x = randomInt(image.length);
-					// y = randomInt(image[0].length);
-					for (int i = 1; i <= imageScale; i++)
-					{
-						for (int j = 1; j <= imageScale; j++)
+				x = randomInt(xMax);
+				y = randomInt(yMax);
+
+				double clock = x / (float) xMax * (Math.PI * 2);
+				int r = (int) ((Math.sin(clock) + 1) * 127);
+				int g = (int) ((Math.sin(clock + Math.PI * 0.666) + 1) * 127);
+				int b = (int) ((Math.sin(clock + Math.PI * 1.333) + 1) * 127);
+				pixel(x, y, r, g, b);
+			}
+		}
+		else
+		{
+			while (true)
+			{
+//				for (x = 0; x < image.length; x++)
+//				{
+//					for (y = 0; y < image[0].length; y++)
+//					{
+//						x = randomInt(image.length);
+//						y = randomInt(image[0].length);
+						int p = randomInt(image.length * image[0].length / 1) * 1;
+						x = p % image[0].length;
+						y = p / image[0].length;
+						for (int i = 1; i <= imageScale; i++)
 						{
-							pixel(imageOffsetX + x * imageScale + i, imageOffsetY + y * imageScale + j,
-									image[x][y] >> 16 & 0xFF, image[x][y] >> 8 & 0xFF, image[x][y] >> 0 & 0xFF);
+							for (int j = 1; j <= imageScale; j++)
+							{
+								pixel(imageOffsetX + x * imageScale + i, imageOffsetY + y * imageScale + j,
+										image[x][y] >> 16 & 0xFF, image[x][y] >> 8 & 0xFF, image[x][y] >> 0 & 0xFF);
+							}
 						}
 					}
-				}
-			}
-			// for (x = 0; x < xMax; x++) {
-			// for (y = 0; y < yMax; y++) {
-			// //pixel(randomInt(xMax), randomInt(yMax), 246, 188, 180);
-			// //out.println ("PX " + (int) (Math.random() * xMax) + " " + (int)
-			// //(Math.random() * yMax) + " 00ff00\\n");
-			// pixel(x, y, 0, 0, 0);
-			// }
-			// }
-
+//				}
+//			}
 		}
 
-		// socket.close ();
+		// for (x = 0; x < xMax; x++) {
+		// for (y = 0; y < yMax; y++) {
+		// //pixel(randomInt(xMax), randomInt(yMax), 246, 188, 180);
+		// //out.println ("PX " + (int) (Math.random() * xMax) + " " + (int)
+		// //(Math.random() * yMax) + " 00ff00\\n");
+		// pixel(x, y, 0, 0, 0);
+		// }
+		// }
 
 	}
 

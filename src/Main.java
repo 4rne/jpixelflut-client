@@ -65,44 +65,27 @@ class Main
 		{
 			while (true)
 			{
-//				for (x = 0; x < image.length; x++)
-//				{
-//					for (y = 0; y < image[0].length; y++)
-//					{
-//						x = randomInt(image.length);
-//						y = randomInt(image[0].length);
-						int p = randomInt(image.length * image[0].length / 1) * 1;
-						x = p % image[0].length;
-						y = p / image[0].length;
-						for (int i = 1; i <= imageScale; i++)
-						{
-							for (int j = 1; j <= imageScale; j++)
-							{
-								pixel(imageOffsetX + x * imageScale + i, imageOffsetY + y * imageScale + j,
-										image[x][y] >> 16 & 0xFF, image[x][y] >> 8 & 0xFF, image[x][y] >> 0 & 0xFF);
-							}
-						}
+				x = randomInt(image.length);
+				y = randomInt(image[0].length);
+				int p = randomInt(image.length * image[0].length / 4) * 4;
+				x = p % image[0].length;
+				y = p / image[0].length;
+				for (int i = 1; i <= imageScale; i++)
+				{
+					for (int j = 1; j <= imageScale; j++)
+					{
+						pixel(imageOffsetX + x * imageScale + i, imageOffsetY + y * imageScale + j,
+								image[x][y] >> 16 & 0xFF, image[x][y] >> 8 & 0xFF, image[x][y] >> 0 & 0xFF);
 					}
-//				}
-//			}
+				}
+			}
 		}
-
-		// for (x = 0; x < xMax; x++) {
-		// for (y = 0; y < yMax; y++) {
-		// //pixel(randomInt(xMax), randomInt(yMax), 246, 188, 180);
-		// //out.println ("PX " + (int) (Math.random() * xMax) + " " + (int)
-		// //(Math.random() * yMax) + " 00ff00\\n");
-		// pixel(x, y, 0, 0, 0);
-		// }
-		// }
-
 	}
 
 	public static void pixel(int x, int y, int r, int g, int b)
 	{
 		StringBuilder str = new StringBuilder();
-		str.append("PX");
-		str.append(' ');
+		str.append("PX ");
 		str.append(x);
 		str.append(' ');
 		str.append(y);

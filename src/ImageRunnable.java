@@ -1,4 +1,7 @@
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.SplittableRandom;
 
 public class ImageRunnable implements Runnable
@@ -13,8 +16,7 @@ public class ImageRunnable implements Runnable
 	int imageOffsetY;
 	static PrintWriter out;
 
-	public ImageRunnable(int thread_number, int threads, int[][] image, int imageScale, int xOffset, int yOffset,
-			PrintWriter out)
+	public ImageRunnable(int thread_number, int threads, int[][] image, int imageScale, int xOffset, int yOffset, String ip, int port) throws UnknownHostException, IOException
 	{
 		this.image = image;
 		this.threads = threads;
@@ -22,11 +24,12 @@ public class ImageRunnable implements Runnable
 		this.imageScale = imageScale;
 		this.imageOffsetX = xOffset;
 		this.imageOffsetY = yOffset;
-		ImageRunnable.out = out;
+		@SuppressWarnings("resource")
+		Socket socket = new Socket(ip, port);
+		out = new PrintWriter(socket.getOutputStream(), true);
 		randomInstance = new SplittableRandom();
 	}
 
-	@Override
 	public void run()
 	{
 		int x;

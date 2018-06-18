@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.SplittableRandom;
 
-public class ImageRunnable implements Runnable
+public class ImageRunnable extends PixelRunnable implements Runnable
 {
 	static String lineEnding = "\n"; // or "\\n"
 	static SplittableRandom randomInstance;
@@ -50,45 +50,11 @@ public class ImageRunnable implements Runnable
 			{
 				for (int j = 1; j <= imageScale; j++)
 				{
-					pixel(imageOffsetX + x * imageScale + i, imageOffsetY + y * imageScale + j,
+					String pixel = pixelToString(imageOffsetX + x * imageScale + i, imageOffsetY + y * imageScale + j,
 							image[x][y] >> 16 & 0xFF, image[x][y] >> 8 & 0xFF, image[x][y] >> 0 & 0xFF);
+					out.write(pixel);
 				}
 			}
 		}
-	}
-
-	public static void pixel(int x, int y, int r, int g, int b)
-	{
-		StringBuilder str = new StringBuilder();
-		str.append("PX ");
-		str.append(x);
-		str.append(' ');
-		str.append(y);
-		str.append(' ');
-		str.append(toHex(r));
-		str.append(toHex(g));
-		str.append(toHex(b));
-		str.append(lineEnding);
-		out.print(str);
-	}
-
-	public static String toHex(int n)
-	{
-		String value = Integer.toHexString(n);
-		if (value.length() < 2)
-		{
-			value = "0" + value;
-		}
-		return value;
-	}
-
-	public static int randomInt(int to)
-	{
-		return randomInstance.nextInt(to);
-	}
-
-	public static int randomInt(int from, int to)
-	{
-		return randomInt(to - from) + from;
 	}
 }

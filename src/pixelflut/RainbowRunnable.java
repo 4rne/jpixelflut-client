@@ -33,8 +33,9 @@ public class RainbowRunnable extends PixelRunnable implements Runnable
 		int y;
 		while (true)
 		{
-			x = randomInt(xMax);
-			y = randomInt(yMax);
+			int p = randomInt(xMax * yMax / threads) * threads + thread_number;
+			x = p % xMax;
+			y = p / xMax;
 
 			double clock = x / (float) xMax * (Math.PI * 2);
 			int r = (int) ((Math.sin(clock) + 1) * 127);

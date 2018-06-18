@@ -1,4 +1,5 @@
 package pixelflut;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -39,9 +40,12 @@ class Main
 			System.out
 					.println("\t-img SRC\tload an image from the location SRC, if no image is specified it uses the rainbow mode");
 			System.out.println("\t-threads N\trun the program with N threads");
-			System.out.println("\t-scale N\tonly useful with -img, scales the image n times. Only integers possible");
+			System.out
+					.println("\t-scale N\tonly useful with -img, scales the image n times. Only integers possible");
 			System.out.println("\t-x N\tOffset on the x-axis, in pixels");
 			System.out.println("\t-y N\tOffset on the y-axis, in pixels");
+			System.out.println("\t-x-max N\timage width for rainbow");
+			System.out.println("\t-y-max N\timage heigth for rainbow");
 			System.exit(1);
 		}
 		if (!arguments.containsKey("port") || !arguments.containsKey("ip"))
@@ -54,8 +58,6 @@ class Main
 				Integer.parseInt(arguments.get("port")));
 		out = new PrintWriter(socket.getOutputStream(), true);
 		randomInstance = new SplittableRandom();
-		int x;
-		int y;
 
 		int[][] image = ImageLoader.readImage(arguments.get("img"));
 		int imageScale = 1;
@@ -74,22 +76,21 @@ class Main
 		{
 			imageOffsetY = Integer.parseInt(arguments.get("Y"));
 		}
-		
+
 		int threads = Integer.parseInt(arguments.get("threads"));
 
 		if (image == null)
 		{
-			// while (true)
-			// {
-			// x = randomInt(xMax);
-			// y = randomInt(yMax);
-			//
-			// double clock = x / (float) xMax * (Math.PI * 2);
-			// int r = (int) ((Math.sin(clock) + 1) * 127);
-			// int g = (int) ((Math.sin(clock + Math.PI * 0.666) + 1) * 127);
-			// int b = (int) ((Math.sin(clock + Math.PI * 1.333) + 1) * 127);
-			// pixel(x, y, r, g, b);
-			// }
+			for (int i = 0; i < threads; i++)
+			{
+				Runnable r = new RainbowRunnable(i, threads,
+						Integer.parseInt(arguments.get("x-max")),
+						Integer.parseInt(arguments.get("y-max")),
+						arguments.get("ip"), Integer.parseInt(arguments
+								.get("port")));
+				Thread t = new Thread(r);
+				t.start();
+			}
 		}
 		else
 		{
@@ -101,24 +102,6 @@ class Main
 				Thread t = new Thread(r);
 				t.start();
 			}
-			// while (true)
-			// {
-			// x = randomInt(image.length);
-			// y = randomInt(image[0].length);
-			// int p = randomInt(image.length * image[0].length / 4) * 4;
-			// x = p % image[0].length;
-			// y = p / image[0].length;
-			// for (int i = 1; i <= imageScale; i++)
-			// {
-			// for (int j = 1; j <= imageScale; j++)
-			// {
-			// pixel(imageOffsetX + x * imageScale + i, imageOffsetY + y *
-			// imageScale + j,
-			// image[x][y] >> 16 & 0xFF, image[x][y] >> 8 & 0xFF, image[x][y] >>
-			// 0 & 0xFF);
-			// }
-			// }
-			// }
 		}
 	}
 

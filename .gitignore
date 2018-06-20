@@ -3,3 +3,11 @@
 .classpath
 *.class
 /bin/
+*.jar
+*.war
+*.ear
+.gradle
+/build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache

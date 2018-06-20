@@ -7,8 +7,6 @@ import java.util.SplittableRandom;
 
 public class ImageRunnable extends PixelRunnable implements Runnable
 {
-	static String lineEnding = "\n"; // or "\\n"
-	static SplittableRandom randomInstance;
 	int thread_number;
 	int threads;
 	int[][] image;

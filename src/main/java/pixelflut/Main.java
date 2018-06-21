@@ -9,11 +9,10 @@ import java.util.SplittableRandom;
 
 class Main
 {
-	static int xMax = 1024;
-	static int yMax = 575;
 	static String lineEnding = "\n"; // or "\\n"
 	static PrintWriter out;
 	static SplittableRandom randomInstance;
+	static int threads;
 	private static Map<String, String> arguments = new HashMap<String, String>();
 
 	public static void main(String[] args) throws IOException
@@ -53,6 +52,15 @@ class Main
 			System.err.println("IP and/or port broken.");
 			System.exit(1);
 		}
+		if (!arguments.containsKey("threads"))
+		{
+			System.out.println("No thread number given, using one thread.");
+			threads = 1;
+		}
+		else
+		{
+			threads = Integer.parseInt(arguments.get("threads"));
+		}
 		@SuppressWarnings("resource")
 		Socket socket = new Socket(arguments.get("ip"),
 				Integer.parseInt(arguments.get("port")));
@@ -77,10 +85,13 @@ class Main
 			imageOffsetY = Integer.parseInt(arguments.get("Y"));
 		}
 
-		int threads = Integer.parseInt(arguments.get("threads"));
-
 		if (image == null)
 		{
+			if (!arguments.containsKey("x-max") || !arguments.containsKey("y-max"))
+			{
+				System.err.println("No x-max or y-max specified. Exiting.");
+				System.exit(1);
+			}
 			for (int i = 0; i < threads; i++)
 			{
 				Runnable r = new RainbowRunnable(i, threads,

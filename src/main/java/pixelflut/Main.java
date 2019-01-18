@@ -76,26 +76,27 @@ class Main
 
 		int imageOffsetX = 0;
 		int imageOffsetY = 0;
-		if (arguments.containsKey("X"))
+		if (arguments.containsKey("x"))
 		{
-			imageOffsetX = Integer.parseInt(arguments.get("X"));
+			imageOffsetX = Integer.parseInt(arguments.get("x"));
 		}
-		if (arguments.containsKey("Y"))
+		if (arguments.containsKey("y"))
 		{
-			imageOffsetY = Integer.parseInt(arguments.get("Y"));
+			imageOffsetY = Integer.parseInt(arguments.get("y"));
 		}
 
 		if (image == null)
 		{
-			if (!arguments.containsKey("x-max") || !arguments.containsKey("y-max"))
+			if (!arguments.containsKey("x-max")
+					|| !arguments.containsKey("y-max"))
 			{
 				System.err.println("No x-max or y-max specified. Exiting.");
 				System.exit(1);
 			}
 			for (int i = 0; i < threads; i++)
 			{
-				Runnable r = new RainbowRunnable(i, threads,
-						Integer.parseInt(arguments.get("x-max")),
+				Runnable r = new RainbowRunnable(i, threads, imageOffsetX,
+						imageOffsetY, Integer.parseInt(arguments.get("x-max")),
 						Integer.parseInt(arguments.get("y-max")),
 						arguments.get("ip"), Integer.parseInt(arguments
 								.get("port")));

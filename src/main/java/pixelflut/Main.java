@@ -3,6 +3,7 @@ package pixelflut;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SplittableRandom;
@@ -12,8 +13,9 @@ class Main
 	static String lineEnding = "\n"; // or "\\n"
 	static PrintWriter out;
 	static SplittableRandom randomInstance;
-	static int threads;
+	static int numThreads;
 	private static Map<String, String> arguments = new HashMap<String, String>();
+	static ArrayList<ImageRunnable> threads = new ArrayList<>();
 
 	public static void main(String[] args) throws IOException
 	{
@@ -55,15 +57,14 @@ class Main
 		if (!arguments.containsKey("threads"))
 		{
 			System.out.println("No thread number given, using one thread.");
-			threads = 1;
+			numThreads = 1;
 		}
 		else
 		{
-			threads = Integer.parseInt(arguments.get("threads"));
+			numThreads = Integer.parseInt(arguments.get("threads"));
 		}
 		@SuppressWarnings("resource")
-		Socket socket = new Socket(arguments.get("ip"),
-				Integer.parseInt(arguments.get("port")));
+		Socket socket = new Socket(arguments.get("ip"), Integer.parseInt(arguments.get("port")));
 		out = new PrintWriter(socket.getOutputStream(), true);
 		randomInstance = new SplittableRandom();
 
@@ -87,32 +88,49 @@ class Main
 
 		if (image == null)
 		{
-			if (!arguments.containsKey("x-max")
-					|| !arguments.containsKey("y-max"))
+			if (!arguments.containsKey("x-max") || !arguments.containsKey("y-max"))
 			{
 				System.err.println("No x-max or y-max specified. Exiting.");
 				System.exit(1);
 			}
-			for (int i = 0; i < threads; i++)
+			for (int i = 0; i < numThreads; i++)
 			{
-				Runnable r = new RainbowRunnable(i, threads, imageOffsetX,
-						imageOffsetY, Integer.parseInt(arguments.get("x-max")),
-						Integer.parseInt(arguments.get("y-max")),
-						arguments.get("ip"), Integer.parseInt(arguments
-								.get("port")));
+				Runnable r = new RainbowRunnable(i, numThreads, imageOffsetX, imageOffsetY,
+						Integer.parseInt(arguments.get("x-max")), Integer.parseInt(arguments.get("y-max")),
+						arguments.get("ip"), Integer.parseInt(arguments.get("port")));
 				Thread t = new Thread(r);
 				t.start();
+				//threads.add(r);
 			}
 		}
 		else
 		{
-			for (int i = 0; i < threads; i++)
+			for (int i = 0; i < numThreads; i++)
 			{
-				Runnable r = new ImageRunnable(i, threads, image, imageScale,
-						imageOffsetX, imageOffsetY, arguments.get("ip"),
-						Integer.parseInt(arguments.get("port")));
+				Runnable r = new ImageRunnable(i, numThreads, image, imageScale, imageOffsetX, imageOffsetY,
+						arguments.get("ip"), Integer.parseInt(arguments.get("port")));
 				Thread t = new Thread(r);
 				t.start();
+				threads.add((ImageRunnable) r);
+			}
+
+			while(true)
+			{
+				try
+				{
+					Thread.sleep(15000);
+				}
+				catch (InterruptedException e)
+				{
+					
+				}
+
+				int x = PixelRunnable.randomInt(1024 - image.length);
+				int y = PixelRunnable.randomInt(600 - image[0].length);
+				for (ImageRunnable t : threads)
+				{
+					t.setPosition(x, y);
+				}
 			}
 		}
 	}

@@ -13,6 +13,8 @@ public class ImageRunnable extends PixelRunnable implements Runnable
 	int imageScale;
 	int imageOffsetX;
 	int imageOffsetY;
+	int width;
+	int height;
 	static PrintWriter out;
 
 	public ImageRunnable(int thread_number, int threads, int[][] image, int imageScale, int xOffset, int yOffset, String ip, int port) throws UnknownHostException, IOException
@@ -33,20 +35,27 @@ public class ImageRunnable extends PixelRunnable implements Runnable
 	{
 		int x;
 		int y;
+		int i;
+		int j;
+		int p;
+		width = image.length;
+		height = image[0].length;
+		int numPixels = width * height;
+		int randTo = numPixels / threads;
 		while (true)
 		{
 			// for (x = 0; x < image.length; x++)
 			// {
 			// for (y = 0; y < image[0].length; y++)
 			// {
-			x = randomInt(image.length);
-			y = randomInt(image[0].length);
-			int p = randomInt(image.length * image[0].length / threads) * threads + thread_number;
-			x = p % image[0].length;
-			y = p / image[0].length;
-			for (int i = 1; i <= imageScale; i++)
+			// x = randomInt(image.length);
+			// y = randomInt(image[0].length);
+			p = randomInt(randTo) * threads + thread_number;
+			x = p % height;
+			y = p / height;
+			for (i = 1; i <= imageScale; i++)
 			{
-				for (int j = 1; j <= imageScale; j++)
+				for (j = 1; j <= imageScale; j++)
 				{
 					String pixel = pixelToString(imageOffsetX + x * imageScale + i, imageOffsetY + y * imageScale + j,
 							image[x][y] >> 16 & 0xFF, image[x][y] >> 8 & 0xFF, image[x][y] >> 0 & 0xFF);
@@ -54,5 +63,11 @@ public class ImageRunnable extends PixelRunnable implements Runnable
 				}
 			}
 		}
+	}
+
+	public void setPosition(int x , int y)
+	{
+		imageOffsetX = x;
+		imageOffsetY = y;
 	}
 }
